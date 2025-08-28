@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v9.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v9.0": {
+      "LoxIntepreter/1.0.0": {
+        "runtime": {
+          "LoxIntepreter.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "LoxIntepreter/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
