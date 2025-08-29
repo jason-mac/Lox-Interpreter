@@ -6,7 +6,7 @@ namespace LoxInterpreter
         COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
 
         BANG, BANG_EQUAL,
-        EQUAL, EQAUL_EQUAL,
+        EQUAL, EQUAL_EQUAL,
         GREATER, GREATER_EQUAL,
         LESS, LESS_EQUAL,
 
