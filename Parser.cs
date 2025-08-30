@@ -11,7 +11,7 @@ namespace LoxInterpreter
             this.tokens = tokens;
         }
 
-        bool match(List<TokenType> types)
+        bool match(params TokenType[] types)
         {
             foreach (TokenType type in types)
             {
@@ -24,16 +24,15 @@ namespace LoxInterpreter
             return false;
         }
 
-        public Expr parse()
+
+        public List<Stmt> parse()
         {
-            try
+            List<Stmt> statements = new List<Stmt>();
+            while (!done())
             {
-                return expression();
+                statements.Add(declaration());
             }
-            catch (ParseError error)
-            {
-                return null;
-            }
+            return statements;
         }
 
         private Token consume(TokenType type, String message)
@@ -70,6 +69,7 @@ namespace LoxInterpreter
                         return;
                 }
             }
+
             advance();
         }
 
@@ -99,25 +99,102 @@ namespace LoxInterpreter
         {
             if (!done()) current++;
             return previous();
-
         }
 
         private Expr expression()
         {
-            return equality();
+            return assignment();
+        }
+
+        private Stmt declaration()
+        {
+            try
+            {
+                if (match(TokenType.VAR)) return varDeclaration();
+
+                return statement();
+            }
+            catch (ParseError error)
+            {
+                synchronize();
+                return null;
+            }
+
+        }
+
+        private Stmt statement()
+        {
+            if (match(TokenType.PRINT)) return printStatement();
+            if (match(TokenType.LEFT_BRACE)) return new Stmt.Block(block());
+            return expressionStatement();
+        }
+
+        private Stmt printStatement()
+        {
+            Expr value = expression();
+            consume(TokenType.SEMICOLON, "Expect ';' after value.");
+            return new Stmt.Print(value);
+        }
+
+        private Stmt varDeclaration()
+        {
+            Token name = consume(TokenType.IDENTIFIER, "Expect variable name.");
+
+            Expr? initializer = null;
+            if (match(TokenType.EQUAL))
+            {
+                initializer = expression();
+            }
+
+            consume(TokenType.SEMICOLON, "Expect ';' after variable declaration");
+            return new Stmt.Var(name, initializer);
+
+        }
+
+        private Stmt expressionStatement()
+        {
+            Expr expr = expression();
+            consume(TokenType.SEMICOLON, "Expect ';' after expression");
+            return new Stmt.Expression(expr);
+        }
+
+        private List<Stmt> block()
+        {
+            List<Stmt> statements = new List<Stmt>();
+
+            while (!check(TokenType.RIGHT_BRACE) && !done())
+            {
+                statements.Add(declaration());
+            }
+
+            consume(TokenType.RIGHT_BRACE, "Expect '}' after block.");
+            return statements;
+        }
+
+        private Expr assignment()
+        {
+            Expr expr = equality();
+            if (match(TokenType.EQUAL))
+            {
+                Token equals = previous();
+                Expr value = assignment();
+                if (expr is Expr.Variable)
+                {
+                    Token name = ((Expr.Variable)expr).name;
+                    return new Expr.Assign(name, value);
+                }
+
+                error(equals, "Invalid assignment target.");
+            }
+            return expr;
+
         }
 
         private Expr equality()
         {
             Expr expr = comparison();
 
-            List<TokenType> types = new List<TokenType>
-            {
-              TokenType.BANG_EQUAL,
-              TokenType.EQUAL_EQUAL,
-            };
-
-            while (match(types))
+            while (match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL))
             {
                 Token oper = previous();
                 Expr right = comparison();
@@ -131,15 +208,9 @@ namespace LoxInterpreter
         {
             Expr expr = term();
 
-            List<TokenType> types = new List<TokenType>
-            {
-              TokenType.GREATER,
-              TokenType.GREATER_EQUAL,
-              TokenType.LESS,
-              TokenType.LESS_EQUAL
-            };
 
-            while (match(types))
+            while (match(TokenType.GREATER, TokenType.GREATER_EQUAL,
+                         TokenType.LESS, TokenType.LESS_EQUAL))
             {
                 Token oper = previous();
                 Expr right = term();
@@ -154,13 +225,7 @@ namespace LoxInterpreter
         {
             Expr expr = factor();
 
-            List<TokenType> types = new List<TokenType>
-            {
-              TokenType.MINUS,
-              TokenType.PLUS
-            };
-
-            while (match(types))
+            while (match(TokenType.MINUS, TokenType.PLUS))
             {
                 Token oper = previous();
                 Expr right = factor();
@@ -173,13 +238,7 @@ namespace LoxInterpreter
         {
             Expr expr = unary();
 
-            List<TokenType> types = new List<TokenType>
-            {
-              TokenType.SLASH,
-              TokenType.STAR,
-            };
-
-            while (match(types))
+            while (match(TokenType.SLASH, TokenType.STAR))
             {
                 Token oper = previous();
                 Expr right = unary();
@@ -190,14 +249,7 @@ namespace LoxInterpreter
 
         private Expr unary()
         {
-
-            List<TokenType> types = new List<TokenType>
-            {
-              TokenType.BANG,
-              TokenType.MINUS,
-            };
-
-            if (match(types))
+            if (match(TokenType.BANG, TokenType.MINUS))
             {
                 Token oper = previous();
                 Expr right = unary();
@@ -208,23 +260,19 @@ namespace LoxInterpreter
 
         private Expr primary()
         {
-            List<TokenType> ttFalse = new List<TokenType> { TokenType.FALSE };
-            List<TokenType> ttTrue = new List<TokenType> { TokenType.TRUE };
-            List<TokenType> ttNil = new List<TokenType> { TokenType.NIL };
-            List<TokenType> ttNumStr = new List<TokenType> { TokenType.NUMBER, TokenType.STRING }
-            List<TokenType> ttLeftP = new List<TokenType> { TokenType.LEFT_PAREN }
-            List<TokenType> ttRightP = new List<TokenType> { TokenType.RIGHT_PAREN }
-            if (match(ttFalse)) return new Expr.Literal(false);
-            if (match(ttTrue)) return new Expr.Literal(true);
-            if (match(ttNil)) return new Expr.Literal(null);
-            if (match(ttNumStr)) return new Expr.Literal(previous().literal);
-            if (match(ttLeftP))
+            if (match(TokenType.FALSE)) return new Expr.Literal(false);
+            if (match(TokenType.TRUE)) return new Expr.Literal(true);
+            if (match(TokenType.NIL)) return new Expr.Literal(null);
+            if (match(TokenType.NUMBER, TokenType.STRING)) return new Expr.Literal(previous().literal);
+            if (match(TokenType.IDENTIFIER)) return new Expr.Variable(previous());
+            if (match(TokenType.LEFT_PAREN))
             {
                 Expr expr = expression();
                 consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.");
                 return new Expr.Grouping(expr);
             }
             throw error(peek(), "Expect Expression");
+
         }
     }
 }

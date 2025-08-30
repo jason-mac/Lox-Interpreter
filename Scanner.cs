@@ -11,7 +11,7 @@ namespace LoxInterpreter
 {
     public class Scanner
     {
-        private static readonly Dictionary<String, TokenType> keywords = new Dictionary<string, TokenType>()
+        private readonly Dictionary<String, TokenType> keywords = new Dictionary<string, TokenType>()
         {
           {"and", TokenType.AND},
           {"class", TokenType.CLASS},
@@ -49,7 +49,7 @@ namespace LoxInterpreter
                 scanToken();
             }
 
-            tokens.Add(new Token(TokenType.EOF, " ", null, line));
+            tokens.Add(new Token(TokenType.EOF, "", null, line));
             return tokens;
         }
 
@@ -74,10 +74,9 @@ namespace LoxInterpreter
                 case ';': addToken(TokenType.SEMICOLON); break;
                 case '*': addToken(TokenType.STAR); break;
                 case '!': addToken(match('=') ? TokenType.BANG_EQUAL : TokenType.BANG); break;
-                case '=': addToken(match('=') ? TokenType.EQAUL_EQUAL : TokenType.EQUAL); break;
+                case '=': addToken(match('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL); break;
                 case '<': addToken(match('=') ? TokenType.LESS_EQUAL : TokenType.LESS); break;
-                case '>':
-                    addToken(match('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER); break;
+                case '>': addToken(match('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER); break;
                 case '/':
                     if (match('/'))
                     {
@@ -88,9 +87,10 @@ namespace LoxInterpreter
                         addToken(TokenType.SLASH);
                     }
                     break;
-                case ' ': break;
-                case '\t': break;
-                case '\r': break;
+                case ' ':
+                case '\t':
+                case '\r':
+                    break;
                 case '\n':
                     line++;
                     break;
@@ -162,7 +162,7 @@ namespace LoxInterpreter
 
         private void addString()
         {
-            while (peek() != '\n' && !isAtEnd())
+            while (peek() != '"' && !isAtEnd())
             {
                 if (peek() == '\n') line++;
                 advance();
@@ -183,7 +183,7 @@ namespace LoxInterpreter
         private char peek()
         {
             if (isAtEnd()) return '\0';
-            return source.ElementAt(current);
+            return source[current];
         }
 
         private char peekNext()
@@ -195,9 +195,9 @@ namespace LoxInterpreter
         private bool match(char expected)
         {
             if (isAtEnd()) return false;
-            if (source.ElementAt(current) != expected) return false;
-            current++;
+            if (source[current] != expected) return false;
 
+            current++;
             return true;
         }
         private char advance()

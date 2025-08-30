@@ -1,23 +1,89 @@
 namespace LoxInterpreter
 {
-    public class Interpreter : Expr.IVisitor<object>
+    public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
     {
+
+        private Environment environment = new Environment();
+
+        public object visitExpressionStmt(Stmt.Expression stmt)
+        {
+            evaluate(stmt.expression);
+            return null;
+        }
+
+        public object visitPrintStmt(Stmt.Print stmt)
+        {
+            object value = evaluate(stmt.expression);
+            Console.WriteLine(stringify(value));
+            return null;
+        }
+
+        public object visitVarStmt(Stmt.Var stmt)
+        {
+            object? value = null;
+            if (stmt.initializer != null)
+            {
+                value = evaluate(stmt.initializer);
+            }
+            environment.define(stmt.name.lexeme, value);
+            return null;
+        }
+
+        public object visitAssignExpr(Expr.Assign expr)
+        {
+            object value = evaluate(expr.value);
+            environment.assign(expr.name, value);
+            return value;
+        }
+
         public object visitLiteralExpr(Expr.Literal expr)
         {
             return expr.value;
         }
 
-        public void interpret(Expr expression)
+        public void interpret(List<Stmt> statements)
         {
             try
             {
-                object value = evaluate(expression);
-                Console.WriteLine(stringify(value));
+                foreach (Stmt statement in statements)
+                {
+                    execute(statement);
+                }
             }
             catch (RuntimeError error)
             {
                 Lox.RuntimeError(error);
 
+            }
+        }
+
+        private void execute(Stmt stmt)
+        {
+            stmt.accept(this);
+        }
+
+        public object visitBlockStmt(Stmt.Block stmt)
+        {
+            executeBlock(stmt.statements, new Environment(environment));
+            return null;
+        }
+
+        public void executeBlock(List<Stmt> statements, Environment environment)
+        {
+            Environment previous = this.environment;
+            try
+            {
+                this.environment = environment;
+
+                foreach (Stmt statement in statements)
+                {
+                    execute(statement);
+
+                }
+            }
+            finally
+            {
+                this.environment = previous;
             }
 
         }
@@ -37,6 +103,12 @@ namespace LoxInterpreter
             return null;
         }
 
+        public object visitVariableExpr(Expr.Variable expr)
+        {
+            return environment.get(expr.name);
+
+        }
+
         private bool isTruthy(object obj)
         {
             if (obj == null) return false;
@@ -52,7 +124,6 @@ namespace LoxInterpreter
         private object evaluate(Expr expr)
         {
             return expr.accept(this);
-
         }
 
         public object visitBinaryExpr(Expr.Binary expr)
@@ -63,8 +134,10 @@ namespace LoxInterpreter
             switch (expr.oper.type)
             {
                 case TokenType.BANG_EQUAL:
+                    checkNumberOperand(expr.oper, right);
                     return !isEqual(left, right);
                 case TokenType.EQUAL_EQUAL:
+                    checkNumberOperand(expr.oper, right);
                     return isEqual(left, right);
                 case TokenType.GREATER:
                     checkNumberOperands(expr.oper, left, right);
@@ -82,23 +155,15 @@ namespace LoxInterpreter
                     checkNumberOperands(expr.oper, left, right);
                     return (double)left - (double)right;
                 case TokenType.PLUS:
-                    if (left is double && right is double)
-                    {
-                        return (double)left + (double)right;
-                    }
-
-                    if (left is string && right is string)
-                    {
-                        return (string)left + (string)right;
-                    }
-                    throw new RuntimeError(expr.oper, "Operands must be two numbers or two strings")
+                    if (left is double && right is double) return (double)left + (double)right;
+                    if (left is string && right is string) return (string)left + (string)right;
+                    throw new RuntimeError(expr.oper, "Operands must be two numbers or two strings");
                 case TokenType.SLASH:
                     checkNumberOperands(expr.oper, left, right);
                     return (double)left / (double)right;
                 case TokenType.STAR:
                     checkNumberOperands(expr.oper, left, right);
                     return (double)left * (double)right;
-
             }
 
             return null;
@@ -133,14 +198,12 @@ namespace LoxInterpreter
                 string text = obj.ToString();
                 if (text.EndsWith(".0"))
                 {
-                    text = text.Substring(0, text.Length - 2);
+                    text = text[0..(text.Length - 2)];
                 }
                 return text;
             }
 
             return obj.ToString();
-
         }
     }
-
 }

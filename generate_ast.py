@@ -24,7 +24,7 @@ def write_ast_file(output_dir, base_name, types):
         open_file.write(tab(1) + "public abstract class " + base_name + "\n")
         open_file.write(tab(1) + "{" + "\n")
         define_visitor(open_file, base_name, types)
-        open_file.write(tab(2) + "public abstract R Accept<R>(IVisitor<R> visitor);\n")
+        open_file.write(tab(2) + "public abstract R accept<R>(IVisitor<R> visitor);\n")
         open_file.write("\n")
         for type_ in types:
             split_ = type_.split(":")
@@ -53,7 +53,7 @@ def define_type(open_file, base_name, class_name, fields_list):
         )
     open_file.write(tab(3) + "}\n")
     open_file.write("\n")
-    open_file.write(f"{tab(3)}public override R Accept<R>(IVisitor<R> visitor)\n")
+    open_file.write(f"{tab(3)}public override R accept<R>(IVisitor<R> visitor)\n")
     open_file.write(f"{tab(3)}{{\n")
     open_file.write(f"{tab(4)}return visitor.visit{class_name}{base_name}(this);\n")
     open_file.write(f"{tab(3)}}}\n")
@@ -85,13 +85,23 @@ def main():
         sys.exit(64)
 
     output_dir = sys.argv[1]
-    content = [
+    expr_content = [
+        "Assign   : Token name, Expr value",
         "Binary   : Expr left, Token oper, Expr right",
         "Grouping : Expr expression",
         "Literal  : Object value",
         "Unary    : Token oper, Expr right",
+        "Variable : Token name",
     ]
-    write_ast_file(output_dir, "Expr", content)
+
+    stmt_content = [
+        "Block      : List<Stmt> statements",
+        "Expression : Expr expression",
+        "Print      : Expr expression",
+        "Var        : Token name, Expr initializer",
+    ]
+    write_ast_file(output_dir, "Expr", expr_content)
+    write_ast_file(output_dir, "Stmt", stmt_content)
 
 
 if __name__ == "__main__":

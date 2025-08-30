@@ -11,15 +11,15 @@ namespace LoxInterpreter
 
     public class Lox
     {
+        private static readonly Interpreter interpreter = new Interpreter();
         static bool hadError = false;
         static bool hadRuntimeError = false;
-        private static readonly Interpreter interpreter = new Interpreter();
         public static void Main(String[] args)
         {
             if (args.Length > 1)
             {
                 Console.Write("Usage: cslox [script]");
-                Environment.Exit(64);
+                System.Environment.Exit(64);
             }
             else if (args.Length == 1)
             {
@@ -28,15 +28,16 @@ namespace LoxInterpreter
             else
             {
                 runPrompt();
-
             }
         }
 
         private static void runFile(String path)
         {
-            run(new String(Encoding.Default.GetChars(File.ReadAllBytes(path))));
-            if (hadError) Environment.Exit(65);
-            if (hadRuntimeError) Environment.Exit(70);
+            StreamReader sr = new StreamReader(path);
+            run(sr.ReadToEnd());
+            //run(new String(Encoding.Default.GetChars(File.ReadAllBytes(path))));
+            if (hadError) System.Environment.Exit(65);
+            if (hadRuntimeError) System.Environment.Exit(70);
         }
 
 
@@ -58,15 +59,15 @@ namespace LoxInterpreter
             Scanner scanner = new Scanner(source);
             List<Token> tokens = scanner.scanTokens();
             Parser parser = new Parser(tokens);
-            Expr expression = parser.parse();
+            List<Stmt> statements = parser.parse();
 
-            foreach (Token token in tokens)
-            {
-                Console.WriteLine(token.toString());
-            }
+            //foreach (Token token in tokens)
+            //{
+            //    Console.WriteLine(token.toString());
+            //}
 
             if (hadError) return;
-            interpreter.interpret(expression);
+            interpreter.interpret(statements);
 
         }
 
@@ -97,6 +98,11 @@ namespace LoxInterpreter
         {
             Console.Error.WriteLine("[line " + line + "] Error" + where + ": " + message);
             hadError = true;
+        }
+
+        public static void Exit(int code)
+        {
+            System.Environment.Exit(code);
         }
     }
 }

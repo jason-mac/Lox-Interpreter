@@ -4,14 +4,33 @@ namespace LoxInterpreter
     {
         public interface IVisitor<R>
         {
-            public R visitBinaryExpr(Binary expr);
-            public R visitGroupingExpr(Grouping expr);
-            public R visitLiteralExpr(Literal expr);
-            public R visitUnaryExpr(Unary expr);
+            R visitAssignExpr(Assign expr);
+            R visitBinaryExpr(Binary expr);
+            R visitGroupingExpr(Grouping expr);
+            R visitLiteralExpr(Literal expr);
+            R visitUnaryExpr(Unary expr);
+            R visitVariableExpr(Variable expr);
 
         }
 
-        public abstract R Accept<R>(IVisitor<R> visitor);
+        public abstract R accept<R>(IVisitor<R> visitor);
+
+        public class Assign : Expr
+        {
+            public readonly Token name;
+            public readonly Expr value;
+
+            public Assign(Token name, Expr value)
+            {
+                this.name = name;
+                this.value = value;
+            }
+
+            public override R accept<R>(IVisitor<R> visitor)
+            {
+                return visitor.visitAssignExpr(this);
+            }
+        }
 
         public class Binary : Expr
         {
@@ -26,7 +45,7 @@ namespace LoxInterpreter
                 this.right = right;
             }
 
-            public override R Accept<R>(IVisitor<R> visitor)
+            public override R accept<R>(IVisitor<R> visitor)
             {
                 return visitor.visitBinaryExpr(this);
             }
@@ -41,7 +60,7 @@ namespace LoxInterpreter
                 this.expression = expression;
             }
 
-            public override R Accept<R>(IVisitor<R> visitor)
+            public override R accept<R>(IVisitor<R> visitor)
             {
                 return visitor.visitGroupingExpr(this);
             }
@@ -49,14 +68,14 @@ namespace LoxInterpreter
 
         public class Literal : Expr
         {
-            public readonly Object? value;
+            public readonly Object value;
 
-            public Literal(Object? value)
+            public Literal(Object value)
             {
                 this.value = value;
             }
 
-            public override R Accept<R>(IVisitor<R> visitor)
+            public override R accept<R>(IVisitor<R> visitor)
             {
                 return visitor.visitLiteralExpr(this);
             }
@@ -73,9 +92,24 @@ namespace LoxInterpreter
                 this.right = right;
             }
 
-            public override R Accept<R>(IVisitor<R> visitor)
+            public override R accept<R>(IVisitor<R> visitor)
             {
                 return visitor.visitUnaryExpr(this);
+            }
+        }
+
+        public class Variable : Expr
+        {
+            public readonly Token name;
+
+            public Variable(Token name)
+            {
+                this.name = name;
+            }
+
+            public override R accept<R>(IVisitor<R> visitor)
+            {
+                return visitor.visitVariableExpr(this);
             }
         }
 

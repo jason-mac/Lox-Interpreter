@@ -12,3 +12,4 @@
 /Users/jasonmac/School/interpreter/LoxIntepreter/obj/Debug/net9.0/LoxIntepreter.pdb
 /Users/jasonmac/School/interpreter/LoxIntepreter/obj/Debug/net9.0/LoxIntepreter.genruntimeconfig.cache
 /Users/jasonmac/School/interpreter/LoxIntepreter/obj/Debug/net9.0/ref/LoxIntepreter.dll
+/Users/jasonmac/School/interpreter/LoxIntepreter/obj/Debug/net9.0/LoxIntepreter.sourcelink.json
