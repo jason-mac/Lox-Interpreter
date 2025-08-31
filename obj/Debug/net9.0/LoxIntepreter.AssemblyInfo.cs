@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LoxIntepreter")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dbf836a750015d1518c7940fd4c73678b78058cc")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ea3f855c80d6055c130903b53f66c4f40e728f9e")]
 [assembly: System.Reflection.AssemblyProductAttribute("LoxIntepreter")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LoxIntepreter")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

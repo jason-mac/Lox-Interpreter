@@ -3,11 +3,41 @@ namespace LoxInterpreter
     public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
     {
 
-        private Environment environment = new Environment();
+        public readonly Environment globals = new Environment();
+        private Environment? env;
+        private readonly Dictionary<Expr, int> locals = new();
+
+        public Interpreter()
+        {
+            globals.define("clock", new NativeFunction(0, (interpreter, arguments) =>
+                                    (double)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() / 1000.0));
+            this.env = globals;
+        }
+
 
         public object visitExpressionStmt(Stmt.Expression stmt)
         {
             evaluate(stmt.expression);
+            return null;
+        }
+
+        public object visitFunctionStmt(Stmt.Function stmt)
+        {
+            LoxFunction function = new LoxFunction(stmt, env);
+            env.define(stmt.name.lexeme, function);
+            return null;
+        }
+
+        public object visitIfStmt(Stmt.If stmt)
+        {
+            if (isTruthy(evaluate(stmt.condition)))
+            {
+                execute(stmt.thenBranch);
+            }
+            else if (stmt.elseBranch != null)
+            {
+                execute(stmt.elseBranch);
+            }
             return null;
         }
 
@@ -18,6 +48,27 @@ namespace LoxInterpreter
             return null;
         }
 
+        public object visitReturnStmt(Stmt.Return stmt)
+        {
+            object value = null;
+            if (stmt.value != null) value = evaluate(stmt.value);
+            throw new Return(value);
+        }
+
+        public object visitLogicalExpr(Expr.Logical expr)
+        {
+            object left = evaluate(expr.left);
+            if (expr.oper.type == TokenType.OR)
+            {
+                if (isTruthy(left)) return left;
+            }
+            else
+            {
+                if (!isTruthy(left)) return left;
+            }
+            return evaluate(expr.right);
+        }
+
         public object visitVarStmt(Stmt.Var stmt)
         {
             object? value = null;
@@ -25,14 +76,31 @@ namespace LoxInterpreter
             {
                 value = evaluate(stmt.initializer);
             }
-            environment.define(stmt.name.lexeme, value);
+            env.define(stmt.name.lexeme, value);
+            return null;
+        }
+
+        public object visitWhileStmt(Stmt.While stmt)
+        {
+            while (isTruthy(evaluate(stmt.condition)))
+            {
+                execute(stmt.body);
+            }
             return null;
         }
 
         public object visitAssignExpr(Expr.Assign expr)
         {
             object value = evaluate(expr.value);
-            environment.assign(expr.name, value);
+            int dist = locals.ContainsKey((expr)) ? locals[expr] : -1;
+            if (dist != -1)
+            {
+                env.assignAt(dist, expr.name, value);
+            }
+            else
+            {
+                globals.assign(expr.name, value);
+            }
             return value;
         }
 
@@ -62,30 +130,40 @@ namespace LoxInterpreter
             stmt.accept(this);
         }
 
+        public void resolve(Expr expr, int depth)
+        {
+            locals[expr] = depth;
+        }
+
         public object visitBlockStmt(Stmt.Block stmt)
         {
-            executeBlock(stmt.statements, new Environment(environment));
+            executeBlock(stmt.statements, new Environment(env));
+            return null;
+        }
+        public object visitClassStmt(Stmt.Class stmt)
+        {
+            env.define(stmt.name.lexeme, null);
+            LoxClass loxClass = new LoxClass(stmt.name.lexeme);
+            env.assign(stmt.name, loxClass);
             return null;
         }
 
         public void executeBlock(List<Stmt> statements, Environment environment)
         {
-            Environment previous = this.environment;
+            Environment previous = this.env;
             try
             {
-                this.environment = environment;
+                env = environment;
 
                 foreach (Stmt statement in statements)
                 {
                     execute(statement);
-
                 }
             }
             finally
             {
-                this.environment = previous;
+                env = previous;
             }
-
         }
 
         public object visitUnaryExpr(Expr.Unary expr)
@@ -105,8 +183,20 @@ namespace LoxInterpreter
 
         public object visitVariableExpr(Expr.Variable expr)
         {
-            return environment.get(expr.name);
+            return lookUpVariable(expr.name, expr);
+        }
 
+        private object lookUpVariable(Token name, Expr expr)
+        {
+            int distance = locals.ContainsKey((expr)) ? locals[expr] : -1;
+            if (distance != -1)
+            {
+                return env.getAt(distance, name.lexeme);
+            }
+            else
+            {
+                return globals.get(name);
+            }
         }
 
         private bool isTruthy(object obj)
@@ -167,6 +257,41 @@ namespace LoxInterpreter
             }
 
             return null;
+        }
+
+        public object visitCallExpr(Expr.Call expr)
+        {
+            object callee = evaluate(expr.callee);
+
+            List<object> arguments = new List<object>();
+            foreach (Expr argument in expr.arguments)
+            {
+                arguments.Add(evaluate((argument)));
+            }
+
+            if (callee is not ILoxCallable)
+            {
+                Console.WriteLine(callee.ToString());
+                throw new RuntimeError(expr.paren, "Can only call functions and classes.");
+            }
+
+            ILoxCallable function = (ILoxCallable)callee;
+            if (arguments.Count != function.Arity())
+            {
+                throw new RuntimeError(expr.paren, "Expected " + function.Arity() + " arguments but got " + arguments.Count + ".");
+            }
+            return function.Call(this, arguments);
+        }
+
+        public object visitGetExpr(Expr.Get expr)
+        {
+            object obj = evaluate(expr.obj);
+            if (obj is LoxInstance)
+            {
+                return ((LoxInstance)obj).get(expr.name);
+            }
+
+            throw new RuntimeError(expr.name, "Only instances have properties.");
         }
 
         private void checkNumberOperands(Token oper, object left, object right)

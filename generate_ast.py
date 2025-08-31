@@ -88,17 +88,25 @@ def main():
     expr_content = [
         "Assign   : Token name, Expr value",
         "Binary   : Expr left, Token oper, Expr right",
+        "Call     : Expr callee, Token paren, List<Expr> arguments",
+        "Get      : Expr obj, Token name",
         "Grouping : Expr expression",
         "Literal  : Object value",
+        "Logical  : Expr left, Token oper, Expr right",
         "Unary    : Token oper, Expr right",
         "Variable : Token name",
     ]
 
     stmt_content = [
         "Block      : List<Stmt> statements",
+        "Class      : Token name, List<Stmt.Function> methods",
         "Expression : Expr expression",
+        "Function   : Token name, List<Token> parameters," + " List<Stmt> body",
+        "If         : Expr condition, Stmt thenBranch," + " Stmt elseBranch",
         "Print      : Expr expression",
+        "Return     : Token keyword, Expr value",
         "Var        : Token name, Expr initializer",
+        "While      : Expr condition, Stmt body",
     ]
     write_ast_file(output_dir, "Expr", expr_content)
     write_ast_file(output_dir, "Stmt", stmt_content)

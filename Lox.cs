@@ -67,6 +67,11 @@ namespace LoxInterpreter
             //}
 
             if (hadError) return;
+
+            Resolver resolver = new Resolver(interpreter);
+            resolver.Resolve(statements);
+
+            if (hadError) return;
             interpreter.interpret(statements);
 
         }

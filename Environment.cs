@@ -28,8 +28,10 @@ namespace LoxInterpreter
                 return values[name.lexeme];
             }
 
-            if (enclosing != null) return enclosing.get(name);
-
+            if (enclosing != null)
+            {
+                return enclosing.get(name);
+            }
             throw new RuntimeError(name, $"Undefined variable '{name.lexeme}'.");
         }
 
@@ -48,7 +50,26 @@ namespace LoxInterpreter
             }
 
             throw new RuntimeError(name, "Undefined variable '" + name.lexeme + "'.");
+        }
 
+        public object getAt(int distance, string name)
+        {
+            return ancestor(distance).values[name];
+        }
+
+        public void assignAt(int distance, Token name, object value)
+        {
+            ancestor(distance).values[name.lexeme] = value;
+        }
+
+        Environment ancestor(int dist)
+        {
+            Environment environment = this;
+            for (int i = 0; i < dist; i++)
+            {
+                environment = environment.enclosing;
+            }
+            return environment;
         }
     }
 
