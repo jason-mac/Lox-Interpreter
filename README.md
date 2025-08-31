@@ -6,6 +6,8 @@ This implementation is guided by the Java version from [Crafting Interpreters](h
 This implementation also includes unit testing of the Lexer and Parser
 using Xunit.
 
+There is also set of notes type-setted in Latex for some of the chapters. 
+
 ## Lox Language Features
 
 - Variable declaration and assignment
