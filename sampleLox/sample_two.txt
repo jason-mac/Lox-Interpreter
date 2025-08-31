@@ -1,0 +1,27 @@
+class parent {
+  method() {
+    print "hi im the parent method!";
+  }
+}
+
+class child < parent {
+  method() {
+    print "calling the super method...";
+    super.method();
+  }
+
+  init(name, major) {
+    this.name = name;
+    this.major = major;
+  }
+
+  c_method() {
+    print "this is c_method()";
+    print "my name is " + this.name + " and i study " + this.major;
+  }
+}
+
+var c = child("john", "comp sci");
+c.method();
+c.c_method();
+

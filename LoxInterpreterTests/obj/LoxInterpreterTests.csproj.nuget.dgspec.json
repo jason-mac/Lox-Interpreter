@@ -1,0 +1,146 @@
+{
+  "format": 1,
+  "restore": {
+    "/Users/jasonmac/School/interpreter/LoxIntepreter/LoxInterpreterTests/LoxInterpreterTests.csproj": {}
+  },
+  "projects": {
+    "/Users/jasonmac/School/interpreter/LoxIntepreter/LoxInterpreter/LoxIntepreter.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/jasonmac/School/interpreter/LoxIntepreter/LoxInterpreter/LoxIntepreter.csproj",
+        "projectName": "LoxIntepreter",
+        "projectPath": "/Users/jasonmac/School/interpreter/LoxIntepreter/LoxInterpreter/LoxIntepreter.csproj",
+        "packagesPath": "/Users/jasonmac/.nuget/packages/",
+        "outputPath": "/Users/jasonmac/School/interpreter/LoxIntepreter/LoxInterpreter/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/jasonmac/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "/usr/local/share/dotnet/library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.304/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/jasonmac/School/interpreter/LoxIntepreter/LoxInterpreterTests/LoxInterpreterTests.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/jasonmac/School/interpreter/LoxIntepreter/LoxInterpreterTests/LoxInterpreterTests.csproj",
+        "projectName": "LoxInterpreterTests",
+        "projectPath": "/Users/jasonmac/School/interpreter/LoxIntepreter/LoxInterpreterTests/LoxInterpreterTests.csproj",
+        "packagesPath": "/Users/jasonmac/.nuget/packages/",
+        "outputPath": "/Users/jasonmac/School/interpreter/LoxIntepreter/LoxInterpreterTests/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/jasonmac/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "/usr/local/share/dotnet/library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {
+              "/Users/jasonmac/School/interpreter/LoxIntepreter/LoxInterpreter/LoxIntepreter.csproj": {
+                "projectPath": "/Users/jasonmac/School/interpreter/LoxIntepreter/LoxInterpreter/LoxIntepreter.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "dependencies": {
+            "Microsoft.NET.Test.Sdk": {
+              "target": "Package",
+              "version": "[17.13.0, )"
+            },
+            "xunit.runner.visualstudio": {
+              "target": "Package",
+              "version": "[3.1.4, )"
+            },
+            "xunit.v3": {
+              "target": "Package",
+              "version": "[3.0.1, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.304/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

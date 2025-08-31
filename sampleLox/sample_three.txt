@@ -1,0 +1,16 @@
+var greeting = "Hello, world!";
+
+fun add(a, b) {
+    print greeting;
+    return a + b;
+}
+
+fun identity(val) {
+  return val;
+} 
+
+var store = add;
+var x = 3;
+var y = 4;
+print identity(store)(3, 4);
+

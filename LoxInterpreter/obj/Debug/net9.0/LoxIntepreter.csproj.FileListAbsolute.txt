@@ -1,0 +1,13 @@
+/Users/jasonmac/School/interpreter/LoxIntepreter/LoxInterpreter/bin/Debug/net9.0/LoxIntepreter
+/Users/jasonmac/School/interpreter/LoxIntepreter/LoxInterpreter/bin/Debug/net9.0/LoxIntepreter.deps.json
+/Users/jasonmac/School/interpreter/LoxIntepreter/LoxInterpreter/bin/Debug/net9.0/LoxIntepreter.runtimeconfig.json
+/Users/jasonmac/School/interpreter/LoxIntepreter/LoxInterpreter/bin/Debug/net9.0/LoxIntepreter.dll
+/Users/jasonmac/School/interpreter/LoxIntepreter/LoxInterpreter/bin/Debug/net9.0/LoxIntepreter.pdb
+/Users/jasonmac/School/interpreter/LoxIntepreter/LoxInterpreter/obj/Debug/net9.0/LoxIntepreter.GeneratedMSBuildEditorConfig.editorconfig
+/Users/jasonmac/School/interpreter/LoxIntepreter/LoxInterpreter/obj/Debug/net9.0/LoxIntepreter.csproj.CoreCompileInputs.cache
+/Users/jasonmac/School/interpreter/LoxIntepreter/LoxInterpreter/obj/Debug/net9.0/LoxIntepreter.sourcelink.json
+/Users/jasonmac/School/interpreter/LoxIntepreter/LoxInterpreter/obj/Debug/net9.0/LoxIntepreter.dll
+/Users/jasonmac/School/interpreter/LoxIntepreter/LoxInterpreter/obj/Debug/net9.0/refint/LoxIntepreter.dll
+/Users/jasonmac/School/interpreter/LoxIntepreter/LoxInterpreter/obj/Debug/net9.0/LoxIntepreter.pdb
+/Users/jasonmac/School/interpreter/LoxIntepreter/LoxInterpreter/obj/Debug/net9.0/LoxIntepreter.genruntimeconfig.cache
+/Users/jasonmac/School/interpreter/LoxIntepreter/LoxInterpreter/obj/Debug/net9.0/ref/LoxIntepreter.dll

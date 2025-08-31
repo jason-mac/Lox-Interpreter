@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <NoWarn>CS8600;CS8618;CS8602;CS8603;CS8604;CS0168;CS8625;</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- No test packages here -->
+  </ItemGroup>
+
+</Project>
