@@ -1,0 +1,3 @@
+var a = 10;
+var b = true;
+print a + b; // RuntimeError: Operands must be two numbers or two strings.
